@@ -2,20 +2,39 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace CityInfo.API.Controllers
 {
     [Route("api/cities")]
     public class PointsOfInterestController : Controller
     {
+        private ILogger<PointsOfInterestController> _logger;
+
+        public PointsOfInterestController(ILogger<PointsOfInterestController> logger)
+        {
+            _logger = logger;
+        }
+
         [HttpGet("{cityId}/pointsOfInterest")]
         public IActionResult GetPointsOfInterest(int cityId){
-            var city = CitiesDataStore.Current.Cities
-                .FirstOrDefault(x => x.Id == cityId);
-            
-            if(city == null){ return NotFound(); };
+            try
+            {
+                var city = CitiesDataStore.Current.Cities
+                    .FirstOrDefault(x => x.Id == cityId);
+                
+                if(city == null){
+                    _logger.LogInformation($"City not found: '{cityId}'");
+                    return NotFound(); 
+                };
 
-            return Ok(city.PointsOfInterest);
+                return Ok(city.PointsOfInterest);
+            }
+            catch (System.Exception)
+            {
+                _logger.LogCritical($"Exception while getting point of interest '{cityId}'");
+                return StatusCode(500, "A problem happened while handling your request.");
+            }
         }
 
         [HttpGet("{cityId}/pointsOfInterest/{id}")]
@@ -157,7 +176,17 @@ namespace CityInfo.API.Controllers
         [HttpDelete("{cityId}/pointsofinterest/{id}")]
         public IActionResult DeletePointOfInterest(int cityId, int id)
         {
+            var city = CitiesDataStore.Current.Cities
+                .FirstOrDefault(c => c.Id == cityId);
+            if (city == null) { return NotFound(); }
 
+            var pointOfInterestFromStore = city.PointsOfInterest
+                .FirstOrDefault(c => c.Id == id);
+            if (pointOfInterestFromStore == null){ return NotFound(); }
+
+            city.PointsOfInterest.Remove(pointOfInterestFromStore);
+
+            return NoContent();
         }
     }
 }
