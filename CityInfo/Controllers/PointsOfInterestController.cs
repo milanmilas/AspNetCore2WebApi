@@ -11,11 +11,11 @@ namespace CityInfo.API.Controllers
     public class PointsOfInterestController : Controller
     {
         private ILogger<PointsOfInterestController> _logger;
-        private readonly LocalMailService _mailService;
+        private readonly IMailService _mailService;
 
         public PointsOfInterestController(
             ILogger<PointsOfInterestController> logger,
-            LocalMailService mailService)
+            IMailService mailService)
         {
             _logger = logger;
             _mailService = mailService;
@@ -193,7 +193,7 @@ namespace CityInfo.API.Controllers
 
             _mailService.Send("Point of interest deleted.",
                 $"Point of interest {pointOfInterestFromStore.Name} with id {pointOfInterestFromStore.Id} was delted.");
-                
+
             return NoContent();
         }
     }
