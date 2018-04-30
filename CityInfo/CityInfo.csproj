@@ -5,6 +5,10 @@
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
   </PropertyGroup>
 
+  <!-- <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup> -->
+
   <ItemGroup>
     <Content Include="nlog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

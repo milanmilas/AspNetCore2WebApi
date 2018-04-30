@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Serialization;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using NLog.Extensions.Logging;
+using CityInfo.API.Services;
 
 namespace CityInfo
 {
@@ -32,6 +33,8 @@ namespace CityInfo
                             new XmlDataContractSerializerOutputFormatter()
                         );
                     });
+
+             services.AddTransient<IMailService, LocalMailService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
